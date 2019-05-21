@@ -12,29 +12,31 @@ class Engine:
         self.blackPawnColor=(0,255,0)
         self.whitePawnColor=(255,0,255)
         self.gameOver=False
-        self.Pawn1B=Pawn(self.blackPawnColor,25,25)
-        self.Pawn2B=Pawn(self.blackPawnColor,125,25)
-        self.Pawn3B=Pawn(self.blackPawnColor,225,25)
-        self.pawnB_List = [self.Pawn1B, self.Pawn2B, self.Pawn3B]
-        self.Pawn1W=Pawn(self.whitePawnColor,25,225)
-        self.Pawn2W=Pawn(self.whitePawnColor,125,225)
-        self.Pawn3W=Pawn(self.whitePawnColor,225,225)
-        self.pawnW_List = [self.Pawn1W, self.Pawn2W, self.Pawn3W]
-    def draw(self):
+        self.round=True
+        self.pawnB_List = []
+        self.pawnW_List = []
+        self.Fields_list = []
+        self.defaultField_list = []
+        for x in range(3):
+            self.pawnB_List.append(Pawn(self.blackPawnColor,25+(x*100),25))
+            self.pawnW_List.append(Pawn(self.whitePawnColor,25+(x*100),225))
         x = 0
         y = 0
-        color = self.fieldColorWhite
-        for loop in range(25):
-            pygame.draw.rect(self.Window,color,(0+50*x,0+50*y,50,50))
-            if color==self.fieldColorDark:
-                color=self.fieldColorWhite
+        for f in range(25):
+            if f%2 == 0:
+                self.Fields_list.append(Field(self.fieldColorWhite,0+50*x,0+50*y))
             else:
-                color=self.fieldColorDark
+                self.defaultField_list.append(Field(self.fieldColorDark,0+50*x,0+50*y))
             if x==4:
                 y=y+1
                 x=0
                 continue
             x=x+1
+    def draw(self):
+        for x in self.defaultField_list:
+            x.draw(self.Window)
+        for x in self.Fields_list:
+            x.draw(self.Window)
         for x in self.pawnB_List:
             x.draw(self.Window)
         for x in self.pawnW_List:
@@ -48,16 +50,24 @@ class Engine:
                 if event.type==QUIT:
                     pygame.guit()
                     sys.exit()
-            if tmp==True:
-                self.Move(self.Pawn1B,125,125)
-                pygame.display.update(self.Pawn1B)
-                tmp=False
+           # Current = None
+           # while self.gameOver!=True:
+            #    if Current != None:
+             #       Current=None
+              #  if(round==True):
+               #     Current=self.getBeatPawn()
+
+            pygame.display.update()
     def Move(self,Pawn_f, x, y):
         Pawn_f.setPosition(x,y)
 
 
 class Pawn:
     def __init__(self, color, pX, pY):
+        self.rightP = None
+        self.leftP = None
+        self.rightPaway = None
+        self.leftPaway = None
         self.color = color
         self.positionX = pX
         self.positionY = pY
@@ -69,7 +79,20 @@ class Pawn:
         print(self.positionX)
         self.positionY = y
         print(self.positionY)
-        
+    def getPosition(self):
+        return (self.positionX, self.positionY)
+
+class Field:
+    def __init__(self, color, pX, pY):
+        self.color = color
+        self.positionX = pX
+        self.positionY = pY 
+        self.pawnPx = pX-25
+        self.pawnPy = pY-25 
+        self.size = 50
+    def draw(self, window):
+        pygame.draw.rect(window, self.color, (self.positionX, self.positionY, self.size, self.size))
+
 
 en = Engine()
 
